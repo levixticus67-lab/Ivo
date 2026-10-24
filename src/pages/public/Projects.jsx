@@ -1,0 +1,24 @@
+import { useMemo, useState } from "react";
+import { Building2, MapPin } from "lucide-react";
+import GlassCard from "../../components/common/GlassCard";
+import GlassModal from "../../components/common/GlassModal";
+import LoadingState from "../../components/common/LoadingState";
+import { useCollection } from "../../hooks/useCollection";
+import { subscribePublicProjects } from "../../services/firestore";
+
+const categories = ["All", "Commercial", "Residential", "Infrastructure"];
+
+export default function Projects() {
+  const { items, loading, error } = useCollection(subscribePublicProjects);
+  const [category, setCategory] = useState("All");
+  const [selected, setSelected] = useState(null);
+  const filtered = useMemo(() => category === "All" ? items : items.filter((project) => (project.category || "").toLowerCase().includes(category.toLowerCase())), [items, category]);
+
+  return <>
+    <section className="px-4 pb-10 pt-12 sm:px-6 sm:pt-20"><div className="mx-auto max-w-7xl"><p className="eyebrow">Portfolio</p><h1 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-6xl">Work that starts with a clear brief.</h1><p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">Browse the projects our team has chosen to share. Each card opens the published project details.</p></div></section>
+    <section className="px-4 pb-24 sm:px-6"><div className="mx-auto max-w-7xl"><div className="mb-8 flex flex-wrap gap-2">{categories.map((name) => <button key={name} onClick={() => setCategory(name)} className={"rounded-full border px-4 py-2 text-sm transition " + (category === name ? "border-blue-300/40 bg-blue-500/20 text-white" : "border-white/10 bg-white/[.03] text-slate-400 hover:text-white")}>{name}</button>)}</div>{loading ? <LoadingState label="Loading portfolio" /> : error ? <GlassCard className="p-6 text-sm text-rose-200">Portfolio unavailable: {error}</GlassCard> : filtered.length ? <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{filtered.map((project) => <button key={project.id} type="button" className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[.04] text-left transition hover:border-blue-300/30" onClick={() => setSelected(project)}><div className="relative h-56 bg-gradient-to-br from-blue-950 via-slate-800 to-sky-950">{project.imageUrl ? <img src={project.imageUrl} alt={project.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /> : <div className="grid h-full place-items-center text-blue-200/50"><Building2 size={46} strokeWidth={1} /></div>}<span className="absolute left-4 top-4 status-pill bg-slate-950/70 text-slate-100">{project.status || "Project"}</span></div><div className="p-5"><div className="flex items-center justify-between gap-3"><span className="text-xs uppercase tracking-wider text-blue-200">{project.category}</span><span className="text-xs text-slate-500">View details</span></div><h2 className="mt-2 text-lg font-semibold text-white">{project.title}</h2><p className="mt-2 flex items-center gap-2 text-sm text-slate-400"><MapPin size={14} />{project.location || "Location not listed"}</p></div></button>)}</div> : <GlassCard className="p-8 text-center"><Building2 className="mx-auto text-blue-300" size={28} /><h2 className="mt-4 text-lg font-semibold text-white">No published projects in this category yet</h2><p className="mt-2 text-sm text-slate-400">The team can publish portfolio items through the admin dashboard.</p></GlassCard>}</div></section>
+    <GlassModal open={Boolean(selected)} onClose={() => setSelected(null)} title={selected ? selected.title : "Project details"} wide>
+      {selected && <div className="grid gap-6 md:grid-cols-[1.05fr_.95fr]"><div>{selected.imageUrl ? <img src={selected.imageUrl} alt={selected.title} className="max-h-[26rem] w-full rounded-xl object-cover" /> : <div className="grid min-h-64 place-items-center rounded-xl bg-gradient-to-br from-blue-950 via-slate-800 to-sky-950 text-blue-200/50"><Building2 size={48} /></div>}{Array.isArray(selected.gallery) && selected.gallery.length > 0 && <div className="mt-3 grid grid-cols-3 gap-2">{selected.gallery.map((url) => <img key={url} src={url} alt="Project gallery" className="h-20 w-full rounded-lg object-cover" />)}</div>}</div><div><p className="text-xs uppercase tracking-wider text-blue-200">{selected.category} · {selected.status}</p><p className="mt-3 flex items-center gap-2 text-sm text-slate-400"><MapPin size={15} />{selected.location || "Location not listed"}</p>{selected.client && <p className="mt-2 text-sm text-slate-400">Client: {selected.client}</p>}<p className="mt-5 leading-7 text-slate-300">{selected.description || selected.summary || "Project details will be added by the team."}</p>{selected.summary && selected.description && <p className="mt-4 text-sm leading-6 text-slate-400">{selected.summary}</p>}</div></div>}
+    </GlassModal>
+  </>;
+}
