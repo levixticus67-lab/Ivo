@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Lint and build
+  frontend:
+    name: Frontend lint and build
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -20,9 +20,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install dependencies
+      - name: Install frontend dependencies
         run: npm install --no-audit --no-fund
       - name: Run ESLint
         run: npm run lint
       - name: Build production bundle
         run: npm run build
+
+  upload-api:
+    name: Test upload API
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install API dependencies
+        run: npm install --no-audit --no-fund
+      - name: Check API syntax
+        run: npm run check
+      - name: Test upload scope and file validation
+        run: npm test

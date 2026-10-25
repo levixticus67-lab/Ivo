@@ -1,5 +1,30 @@
 services:
   - type: web
+    name: isometric-designs-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install --no-audit --no-fund
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        value: https://isometric-designs.onrender.com
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+  - type: web
     name: isometric-designs
     runtime: static
     buildCommand: npm install --no-audit --no-fund && npm run lint && npm run build
@@ -21,6 +46,11 @@ services:
         sync: false
       - key: VITE_FIREBASE_APP_CHECK_KEY
         sync: false
+      - key: VITE_UPLOAD_API_URL
+        fromService:
+          type: web
+          name: isometric-designs-api
+          property: host
       - key: VITE_RENDER_API_URL
         sync: false
     routes:

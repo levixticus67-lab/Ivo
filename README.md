@@ -1,35 +1,37 @@
 # Isometric Designs Company Limited
 
-A React, Vite, and Tailwind public website with a Firebase-backed admin dashboard for Isometric Designs Company Limited.
+A React, Vite, and Tailwind public website with a Firebase-backed admin dashboard and a signed Cloudinary image upload API.
 
 ## Included
 
 - Public routes: home, about, services, projects, and contact / quote request.
-- Admin routes: Firebase sign-in, analytics overview, project CRUD, quote inbox, testimonial publishing, and contact settings.
-- Firestore real-time data for projects, testimonials, quote requests, and public site settings.
-- Firebase custom-claim authorization and restrictive Firestore rules. Public visitors can create validated quote requests; only an admin can read leads or edit site data.
-- Optional Render API relay through a centralized fetch service.
-- Render static-site Blueprint, GitHub Actions CI, and a manual Render deploy-hook workflow.
+- Admin routes: Firebase sign-in, analytics overview, project CRUD, quote inbox, testimonial publishing, and site settings.
+- Firebase Auth custom-claim authorization and restrictive Firestore rules. Public visitors can create validated quote requests; only administrators can read leads or edit site data.
+- Admin image-upload buttons for homepage, About, contact, service cards, project covers and galleries, and testimonial portraits.
+- A Node API service that verifies Firebase admin ID tokens before uploading images to Cloudinary. The Cloudinary API secret stays server-side.
+- Clearly labelled illustrative sample images and portfolio concepts for visual testing. They are not real company projects or client claims.
+- Render Blueprint for the static frontend and API service, GitHub Actions CI, and manual Render deploy workflows.
 
 ## Local setup
 
 1. Install Node.js 20 or later.
-2. Run npm install.
-3. Copy .env.example to .env.local and enter the Firebase web app configuration and Render API URL.
-4. Configure Firebase Authentication, Firestore, and administrator custom claims as described in DEPLOYMENT_GUIDE.md.
-5. Run npm run dev for local development, npm run lint for lint checks, and npm run build for a production build.
+2. Run npm install for the frontend and npm install inside server for the API.
+3. Copy .env.example to .env.local. For the API, copy server/.env.example to server/.env and use test credentials from your own Firebase and Cloudinary accounts.
+4. Configure Firebase Authentication, Firestore, the approved admin claim, and the server-side Firebase Admin credentials described in DEPLOYMENT_GUIDE.md.
+5. Run npm run dev for the frontend. Run npm start from server for the upload API. Use npm run lint and npm run build for frontend checks; use npm run check and npm test from server for API checks.
 
-No Firebase credentials or service-account keys belong in this repository. Vite client environment values are bundled into the public frontend; Firebase API keys should be referrer-restricted and Firestore rules must be deployed.
+Never commit real .env files, Cloudinary API secrets, Firebase service-account private keys, or deploy-hook URLs. Vite environment values are bundled into the public website; only public Firebase web-app configuration belongs there.
 
 ## Deploy
 
-Use the step-by-step [deployment guide](DEPLOYMENT_GUIDE.md). The Render Blueprint describes a static site and SPA rewrite. GitHub Actions runs lint and build checks for pushes to main and pull requests. A separate workflow can trigger a Render deploy hook manually.
+Use the step-by-step [deployment guide](DEPLOYMENT_GUIDE.md). The Render Blueprint creates an API web service and a static frontend with a linked upload API URL and SPA rewrite. GitHub Actions lint/build the frontend and run API syntax and unit checks. Configure Render secrets before enabling uploads.
 
 ## Data model
 
-- projects: title, category, status, location, imageUrl, client, summary, description, isPublished, timestamps.
+- projects: title, category, status, location, imageUrl, imagePublicId, gallery, client, summary, description, isPublished, timestamps.
 - quotes: contact details, project brief, status, createdAt.
-- testimonials: quote, name, role or company, isPublished.
-- siteSettings/public: verified address, phone, email, working hours, map link, and tagline.
+- testimonials: quote, name, role, optional portrait, isPublished.
+- siteSettings/public: verified contact details, hero/About/contact imagery, per-service images, tagline, and updatedAt.
+- Cloudinary folders: fixed website-image areas; image uploads require a verified Firebase admin custom claim.
 
-The repository contains no sample client records, testimonials, employee identities, project claims, or company certifications. Add only details the company has verified.
+The repository contains no sample client records, testimonials, employee identities, project claims, or company certifications. The visual demo assets are marked as illustrative concepts.

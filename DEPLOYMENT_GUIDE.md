@@ -1,62 +1,67 @@
-# Isometric Designs — Step-by-step deployment guide
+# Isometric Designs — deployment and image upload guide
 
-This project is a static React/Vite frontend. It uses Firebase Authentication and Cloud Firestore directly from the browser, and can forward quote requests to an existing Render API. The repository includes a Render Blueprint and GitHub Actions workflows. Do not commit .env files, private keys, service-account JSON, or Firebase Admin credentials.
+This project has two Render services: a public React/Vite static site and a small Node API that verifies admin sessions and sends uploaded images to Cloudinary. Firebase Auth and Firestore remain the source for admin identity and public content. The images are stored in Cloudinary; their secure URLs and metadata are saved in Firestore.
 
-## 1. Prepare Firebase
+Never commit .env files, Firebase service-account private keys, Cloudinary API secrets, or Render deploy-hook URLs. Do not send credentials in chat.
 
-1. Create or select a Firebase project at console.firebase.google.com.
-2. Add a Web app in Project settings and copy its web configuration values.
-3. In Authentication, enable Email/Password sign-in. Create admin user accounts only for approved staff.
-4. Create the Cloud Firestore database in the region appropriate for your users and data.
-5. In a trusted server-side environment using the Firebase Admin SDK, assign the custom claim admin=true to each approved admin account. The client does not grant admin privileges. Example Admin SDK operation: setCustomUserClaims(uid, { admin: true }). Never put a service-account key in Vite or the browser.
-6. Install the Firebase CLI in your trusted deployment environment, authenticate, select the correct project, and deploy the included rules with firebase deploy --only firestore:rules. Confirm the rules are active before accepting live quote requests.
-7. Optional but recommended: configure Firebase App Check for the production domain, set the reCAPTCHA v3 site key, and enable enforcement for Firestore and Authentication after validating the app.
-8. Add verified company contact details through Admin → Site settings after the first deploy.
+## 1. Firebase setup
 
-The Firestore rules permit public creation of quote requests with validated fields; only authenticated users with the admin custom claim can read those requests, change project records, publish testimonials, or edit site settings. Review the rules before launch and configure App Check / abuse controls.
+1. In Firebase Console, create or select the project and add a Web app. Copy the web app values for the frontend environment variables listed in section 3.
+2. In Authentication, enable Email/Password sign-in and create accounts only for approved staff.
+3. Create Cloud Firestore in the region appropriate for your users and data.
+4. In a trusted server-side environment using Firebase Admin SDK, assign the custom claim admin=true to each approved admin account. The client cannot grant itself access. Never put service-account credentials in a Vite variable or the browser.
+5. Add the production website domain to Firebase Authentication authorized domains.
+6. Deploy the included Firestore rules with Firebase CLI: firebase deploy --only firestore:rules. The rules allow validated public quote creation and restrict project, testimonial, lead, and site-settings access to admins.
+7. Optional: configure Firebase App Check for the production domain and enable enforcement after verifying the app.
 
-## 2. Configure the Render API
+For the Render API, create a Firebase service account in Firebase Console → Project settings → Service accounts. Store its project ID, client email, and private key only in the API service’s Render environment variables described below. The private key is server-only.
 
-1. Confirm the backend is deployed and exposes POST /api/quotes (or the matching path under your API base URL).
-2. Confirm its CORS policy allows the production website origin and accepts JSON requests.
-3. The frontend saves a quote to Firestore first, then attempts the API relay. A relay failure does not remove the Firestore lead.
-4. Set VITE_RENDER_API_URL to the API base, for example https://your-render-api.onrender.com/api. Leave it empty only if the relay is not used.
+## 2. Cloudinary setup
 
-## 3. Deploy the static site to Render
+1. Create or select a Cloudinary account and open the dashboard / API settings.
+2. Copy the Cloud name and API key. Keep the API secret private.
+3. In Render, add the Cloudinary values only to the isometric-designs-api service: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.
+4. Do not create a public unsigned upload preset. The site sends an image to the API; the API verifies the Firebase ID token and admin claim, applies an approved image scope, enforces image format and a 10 MB limit, then uploads the file to Cloudinary.
 
-1. In Render, choose New → Blueprint and connect the GitHub repository levixticus67-lab/Ivo.
-2. Render reads render.yaml and creates the isometric-designs static site. Confirm the build command and SPA rewrite before creating the service.
-3. Add the VITE_FIREBASE_* values from the Firebase Web app and VITE_RENDER_API_URL in Render’s environment settings. Add VITE_FIREBASE_APP_CHECK_KEY if App Check is configured.
-4. Deploy. Render will run npm install, lint, and build, then publish dist.
-5. Open the generated Render URL and verify that direct navigation and refresh work on /about, /services, /projects, /contact, and /admin/login.
-6. In Firebase Authentication, add the production domain to the authorized domains list. Restrict the Firebase API key to approved web referrers in Google Cloud.
-7. Check the browser console and Firestore usage dashboard. Confirm public pages only expose published projects/testimonials and quote submissions appear in the admin inbox.
+The frontend’s upload buttons accept JPG, PNG, WebP, and AVIF. Image assets are organized into fixed Cloudinary folders for hero, About, contact, services, project covers, project galleries, and testimonials. The API returns Cloudinary’s secure URL and public ID; the admin page saves the image with the Firestore record. Click Save on the relevant form to publish the uploaded image.
 
-## 4. Configure GitHub Actions
+## 3. Deploy the Render services
 
-The CI workflow runs on pushes to main and pull requests targeting main. It installs dependencies, runs ESLint, and produces a Vite production build. Check the Actions tab after the first push; resolve any failed check before publishing a release.
+1. In Render, sync the existing Blueprint from this repository or create a new Blueprint connected to levixticus67-lab/Ivo. Review the plan before confirming: the Blueprint declares a free Render web service for the image API and the existing static site.
+2. Configure the isometric-designs-api service with these environment variables:
+   - FIREBASE_PROJECT_ID — same project as the frontend Firebase app.
+   - FIREBASE_CLIENT_EMAIL — service-account client email.
+   - FIREBASE_PRIVATE_KEY — service-account private key. Paste it into Render’s secret value field; do not add it to GitHub.
+   - CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET — from Cloudinary.
+   - CORS_ORIGIN — https://isometric-designs.onrender.com. Add localhost:5173 as a comma-separated extra origin only for development.
+3. Configure the static site with its VITE_FIREBASE_* values from the Firebase Web app. VITE_UPLOAD_API_URL is linked by the Blueprint to the API service host; if your existing static service is not managed by the Blueprint, set it to the API URL followed by /api, for example https://isometric-designs-api.onrender.com/api.
+4. Leave VITE_RENDER_API_URL empty unless you have a separate quote-relay API. It is not the image API URL.
+5. Save the service environment changes and deploy/redeploy the API and frontend. Vite embeds VITE_* values during the build, so the frontend must be rebuilt after changing its environment variables.
+6. Check the API health URL at https://YOUR-API-SERVICE.onrender.com/api/health. It should respond with ok=true and configuration booleans; it never returns credentials. If the service name differs, use the host shown in Render.
+7. Open the website and sign in at /admin/login using a Firebase account with admin=true. In Site settings, Projects, or Testimonials, use the Upload image button, then save the record. Verify the published image on the public page.
 
-For one-click manual Render deploys:
+Render free web services may sleep when idle, so the first image upload after inactivity can take longer. Select a higher service plan if that delay is unsuitable for the business.
 
-1. In the Render static-site settings, create a deploy hook and copy its URL.
-2. In GitHub, open Settings → Secrets and variables → Actions → New repository secret.
-3. Name the secret RENDER_DEPLOY_HOOK_URL and paste the hook URL there. Do not put it in source files or workflow logs.
-4. Open Actions → Deploy Render static site → Run workflow. The workflow sends a POST to the secret deploy hook.
-5. Verify deployment status in Render. The CI workflow remains the required build check; the manual deploy workflow is a trigger, not a substitute for reviewing the Render deployment result.
+## 4. GitHub Actions
 
-## 5. Operational checks
+The CI workflow checks frontend ESLint and production build, then installs the API dependencies and runs API syntax and upload validation tests on pushes to main and pull requests. Automatic Render deployments can deploy both services after a successful push when enabled in Render.
 
-- Create and verify the first admin custom claim before opening admin routes to staff.
-- Test one quote end-to-end, confirm it is in Firestore, confirm the backend relay behavior, and verify the admin can move it through New, In Review, Contacted, and Closed.
-- Add projects and testimonials only after the company approves their text, images, client references, and publication status.
-- Add privacy and data-retention notices appropriate to the company’s jurisdiction before collecting real contact data.
-- Monitor Firestore costs, App Check metrics, Render build/deploy logs, and GitHub Actions.
+For manual deploys, create a separate Render deploy hook for each service, then add the hook URLs as GitHub repository Actions secrets:
 
-## 6. Useful commands
+- RENDER_DEPLOY_HOOK_URL for the static site workflow.
+- RENDER_API_DEPLOY_HOOK_URL for the image API workflow.
 
-- Install packages: npm install
-- Lint: npm run lint
-- Production build: npm run build
-- Deploy Firestore rules: firebase deploy --only firestore:rules
+Keep hook URLs in GitHub Secrets, not source files or logs.
 
-Environment keys are listed in .env.example. The Firebase Web API key is not a server secret, but it should be referrer-restricted. Firebase Admin/service-account credentials and the Render deploy-hook URL are secrets and must be stored only in a trusted secret manager.
+## 5. Sample imagery and go-live checklist
+
+- Four generated concept images are included in public/demo-images and shown as illustrative examples across the public site.
+- The portfolio shows three labelled sample concepts only when Firestore has no published project records. They are not actual company work. Publishing a real project replaces the sample set.
+- Replace homepage, About, contact, and service imagery with company-approved images in Admin → Site settings. Add approved photos to project covers/galleries and client portraits only when the company has permission to publish them.
+- Verify that an admin upload appears on the public site after saving and that a signed-in non-admin account receives a 403 from the API upload route.
+- Confirm the company’s privacy notice, verified contact details, real portfolio permissions, and image rights before go-live.
+
+## 6. Commands
+
+- Frontend: npm install, npm run lint, npm run build.
+- API: cd server, npm install, npm run check, npm test.

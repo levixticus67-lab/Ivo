@@ -1,0 +1,51 @@
+export const demoImages = {
+  hero: "/demo-images/isometric-hero.jpg",
+  about: "/demo-images/isometric-residential.jpg",
+  contact: "/demo-images/isometric-interior.jpg",
+  services: {
+    commercial: "/demo-images/isometric-hero.jpg",
+    design: "/demo-images/isometric-residential.jpg",
+    infrastructure: "/demo-images/isometric-infrastructure.jpg",
+    renovation: "/demo-images/isometric-interior.jpg",
+    management: "/demo-images/isometric-hero.jpg",
+  },
+};
+
+export const demoProjects = [
+  {
+    id: "demo-commercial-concept",
+    title: "Commercial workspace concept",
+    category: "Commercial",
+    status: "Sample concept",
+    location: "Illustrative test content",
+    imageUrl: demoImages.hero,
+    gallery: [],
+    summary: "A sample visual for testing the portfolio layout.",
+    description: "Illustrative, AI-generated concept imagery included to demonstrate the site. This is not an actual client, commissioned design, or completed Isometric project.",
+    isDemo: true,
+  },
+  {
+    id: "demo-residential-concept",
+    title: "Residential design concept",
+    category: "Residential",
+    status: "Sample concept",
+    location: "Illustrative test content",
+    imageUrl: demoImages.about,
+    gallery: [],
+    summary: "A sample visual for testing residential project cards.",
+    description: "Illustrative, AI-generated concept imagery included to demonstrate the site. This is not an actual client, commissioned design, or completed Isometric project.",
+    isDemo: true,
+  },
+  {
+    id: "demo-infrastructure-concept",
+    title: "Civil infrastructure concept",
+    category: "Infrastructure",
+    status: "Sample concept",
+    location: "Illustrative test content",
+    imageUrl: demoImages.services.infrastructure,
+    gallery: [],
+    summary: "A sample visual for testing infrastructure project cards.",
+    description: "Illustrative, AI-generated concept imagery included to demonstrate the site. This is not an actual client, commissioned design, or completed Isometric project.",
+    isDemo: true,
+  },
+];
