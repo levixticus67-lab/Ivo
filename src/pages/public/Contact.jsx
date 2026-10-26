@@ -3,7 +3,6 @@ import { Clock, Mail, MapPin, Phone, Send } from "lucide-react";
 import GlassCard from "../../components/common/GlassCard";
 import SectionHeading from "../../components/common/SectionHeading";
 import { isFirebaseConfigured } from "../../firebase/config";
-import { useCollection } from "../../hooks/useCollection";
 import { useSiteSettings } from "../../hooks/useSiteSettings";
 import { demoImages } from "../../data/demoImagery";
 import { resolveImageUrl } from "../../utils/images";

@@ -7,7 +7,6 @@ import { isFirebaseConfigured } from "../../firebase/config";
 import { useCollection } from "../../hooks/useCollection";
 import { saveSiteSettings, subscribeSiteSettings } from "../../services/firestore";
 import { services } from "../../data/services";
-import { resolveImageUrl } from "../../utils/images";
 
 const watchSettings = (callback, onError) => subscribeSiteSettings((settings) => callback([settings]), onError);
 const emptySettings = { address: "", phone: "", email: "", workingHours: "", mapLink: "", tagline: "Engineering Precision. Structural Excellence. Innovative Designs.", serviceImages: {} };
