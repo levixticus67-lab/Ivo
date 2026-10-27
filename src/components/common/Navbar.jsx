@@ -13,8 +13,8 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6">
-      <nav className="glass-panel mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6" aria-label="Main navigation">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 px-4 backdrop-blur-xl sm:px-6">
+      <nav className="mx-auto flex min-h-[4.5rem] max-w-7xl items-center justify-between py-3" aria-label="Main navigation">
         <Link to="/" onClick={close} className="flex min-w-0 items-center gap-3">
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-blue-300/20 bg-blue-500/15 text-blue-300"><Building2 size={21} /></span>
           <span className="min-w-0"><span className="block truncate text-sm font-semibold tracking-wide text-white sm:text-base">Isometric Designs</span><span className="hidden text-[10px] uppercase tracking-[.18em] text-slate-400 sm:block">Company Limited</span></span>
@@ -25,7 +25,7 @@ export default function Navbar() {
         </div>
         <button type="button" className="icon-button md:hidden" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</button>
       </nav>
-      {open && <div className="glass-panel mx-auto mt-2 max-w-7xl p-3 md:hidden">{links.map((link) => <NavLink onClick={close} key={link.to} to={link.to} className="block rounded-xl px-4 py-3 text-sm text-slate-200 hover:bg-white/10">{link.label}</NavLink>)}<Link onClick={close} to="/contact" className="button-primary mt-2 w-full">Request a quote <ArrowUpRight size={15} /></Link></div>}
+      {open && <div className="mx-auto max-w-7xl border-t border-white/10 py-3 md:hidden">{links.map((link) => <NavLink onClick={close} key={link.to} to={link.to} className="block rounded-xl px-4 py-3 text-sm text-slate-200 hover:bg-white/10">{link.label}</NavLink>)}<Link onClick={close} to="/contact" className="button-primary mt-2 w-full">Request a quote <ArrowUpRight size={15} /></Link></div>}
     </header>
   );
 }

@@ -16,7 +16,7 @@ import Settings from "./pages/admin/Settings";
 import ManageTestimonials from "./pages/admin/ManageTestimonials";
 
 function PublicLayout() {
-  return <div className="bg-mesh min-h-screen text-white"><Navbar /><main className="pt-24"><Outlet /></main><Footer /></div>;
+  return <div className="bg-mesh min-h-screen text-white"><Navbar /><main className="min-h-[60vh]"><Outlet /></main><Footer /></div>;
 }
 
 function NotFound() {
