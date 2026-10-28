@@ -31,3 +31,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .status-planned { color: #cbd5e1; }
 .status-closed { color: #94a3b8; }
 ::selection { background: rgba(37,99,235,.45); color: white; }
+
+.public-site .eyebrow { color: #d7b36c; }
+.public-site .button-primary { border-color: rgba(222,190,126,.55); background: linear-gradient(135deg,#b9904f,#986b30); color: #fff; box-shadow: 0 10px 28px rgba(2,6,23,.25); }
+.public-site .button-primary:hover { background: linear-gradient(135deg,#c39a5b,#a77838); }
+.public-site .glass-panel { border-color: rgba(255,255,255,.14); border-radius: .9rem; background: rgba(15,23,42,.68); box-shadow: 0 16px 48px rgba(2,6,23,.22); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }

@@ -14,6 +14,7 @@ const uploadFolders = Object.freeze({
   "project-cover": "isometric-designs/website/projects/covers",
   "project-gallery": "isometric-designs/website/projects/gallery",
   testimonial: "isometric-designs/website/testimonials",
+  collaborator: "isometric-designs/website/collaborators",
 });
 
 export function getUploadFolder(section) {

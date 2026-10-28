@@ -11,12 +11,13 @@ import Contact from "./pages/public/Contact";
 import Login from "./pages/admin/Login";
 import Overview from "./pages/admin/Overview";
 import ManageProjects from "./pages/admin/ManageProjects";
+import ManageCollaborators from "./pages/admin/ManageCollaborators";
 import Leads from "./pages/admin/Leads";
 import Settings from "./pages/admin/Settings";
 import ManageTestimonials from "./pages/admin/ManageTestimonials";
 
 function PublicLayout() {
-  return <div className="bg-mesh min-h-screen text-white"><Navbar /><main className="min-h-[60vh]"><Outlet /></main><Footer /></div>;
+  return <div className="public-site bg-mesh min-h-screen text-white"><Navbar /><main className="min-h-[60vh]"><Outlet /></main><Footer /></div>;
 }
 
 function NotFound() {
@@ -39,6 +40,7 @@ export default function App() {
           <Route index element={<Overview />} />
           <Route path="dashboard" element={<Overview />} />
           <Route path="projects" element={<ManageProjects />} />
+          <Route path="collaborators" element={<ManageCollaborators />} />
           <Route path="leads" element={<Leads />} />
           <Route path="testimonials" element={<ManageTestimonials />} />
           <Route path="settings" element={<Settings />} />

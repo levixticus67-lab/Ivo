@@ -5,6 +5,7 @@ import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES, getUploadFolder, isAllowedImageTy
 test("upload scopes resolve only to fixed Isometric folders", () => {
   assert.equal(getUploadFolder("hero"), "isometric-designs/website/hero");
   assert.equal(getUploadFolder("project-gallery"), "isometric-designs/website/projects/gallery");
+  assert.equal(getUploadFolder("collaborator"), "isometric-designs/website/collaborators");
   assert.throws(() => getUploadFolder("../../private"), /supported image area/);
   assert.throws(() => getUploadFolder(""), /supported image area/);
 });

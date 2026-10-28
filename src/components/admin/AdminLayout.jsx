@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { ArrowLeft, Briefcase, BarChart3, ClipboardList, LogOut, MessageSquare, Settings, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Briefcase, BarChart3, ClipboardList, LogOut, MessageSquare, Settings, ShieldCheck, Users } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 const items = [
@@ -7,6 +7,7 @@ const items = [
   { to: "/admin/projects", label: "Projects", icon: Briefcase },
   { to: "/admin/leads", label: "Quote inbox", icon: ClipboardList },
   { to: "/admin/testimonials", label: "Testimonials", icon: MessageSquare },
+  { to: "/admin/collaborators", label: "Collaborators", icon: Users },
   { to: "/admin/settings", label: "Site settings", icon: Settings },
 ];
 
