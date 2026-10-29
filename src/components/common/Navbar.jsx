@@ -17,8 +17,8 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/90 px-4 backdrop-blur-xl sm:px-6">
       <nav className="mx-auto flex min-h-[4.75rem] max-w-7xl items-center justify-between gap-6 py-3" aria-label="Main navigation">
         <Link to="/" onClick={close} className="min-w-0 leading-tight">
-          <span className="block truncate text-sm font-bold uppercase tracking-[.12em] text-white sm:text-base">Isometric Designs</span>
-          <span className="mt-1 block text-[10px] uppercase tracking-[.2em] text-slate-400">Company Limited</span>
+          <span className="block truncate text-[10px] font-bold uppercase tracking-[.08em] text-white sm:text-sm">Isometric Designs and Construction</span>
+          <span className="mt-1 block text-[9px] uppercase tracking-[.18em] text-slate-400 sm:text-[10px]">Company Limited</span>
         </Link>
         <div className="hidden items-center gap-7 md:flex">
           {links.map((link) => <NavLink key={link.to} to={link.to} end={link.end} className={({ isActive }) => "relative py-2 text-sm transition " + (isActive ? "font-semibold text-white after:absolute after:inset-x-0 after:-bottom-2 after:h-0.5 after:bg-amber-300" : "text-slate-300 hover:text-white")}>{link.label}</NavLink>)}

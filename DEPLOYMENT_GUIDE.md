@@ -1,4 +1,4 @@
-# Isometric Designs — deployment and image upload guide
+# Isometric Designs and Construction Company Limited — deployment and image upload guide
 
 This project has two Render services: a public React/Vite static site and a small Node API that verifies admin sessions and sends uploaded images to Cloudinary. Firebase Auth and Firestore remain the source for admin identity and public content. The images are stored in Cloudinary; their secure URLs and metadata are saved in Firestore.
 

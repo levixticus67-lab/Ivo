@@ -32,7 +32,7 @@ export default function About() {
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/10" />
       <div className="relative mx-auto w-full max-w-7xl">
         <p className="eyebrow">About</p>
-        <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-6xl">Isometric Designs Company Limited</h1>
+        <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-6xl">Isometric Designs and Construction Company Limited</h1>
         <p className="mt-5 max-w-3xl text-base leading-7 text-slate-200 sm:text-lg">We work across commercial construction, residential design and build, civil infrastructure, structural engineering and interior renovation. We bring these services together in one coordinated offer.</p>
       </div>
       <p className="absolute bottom-4 right-4 text-xs text-white/70">{hasCustomAboutImage ? "Company image" : "Illustrative concept image"}</p>
