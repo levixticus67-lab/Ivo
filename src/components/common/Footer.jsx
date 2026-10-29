@@ -5,11 +5,16 @@ import { subscribeSiteSettings } from "../../services/firestore";
 
 const watchFooterSettings = (callback, onError) => subscribeSiteSettings((settings) => callback([settings]), onError);
 
+function TikTokIcon({ size = 17 }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12.525.02c1.31-.02 2.61-.01 3.92-.02.08 1.53.63 2.99 1.74 4.03 1.1 1.04 2.57 1.58 3.83 1.59v3.92a9.3 9.3 0 0 1-5.58-1.87v8.47c0 1.74-.7 3.4-1.93 4.63a6.5 6.5 0 0 1-4.61 1.9c-1.74.01-3.41-.68-4.64-1.9a6.54 6.54 0 0 1-.91-8.16 6.53 6.53 0 0 1 7.73-2.79v4.2a3.2 3.2 0 0 0-3.74.75 3.22 3.22 0 0 0 .13 4.27 3.2 3.2 0 0 0 4.5.1c.59-.59.91-1.39.91-2.22V0h-.35z" /></svg>;
+}
+
 const socialPlatforms = [
   { key: "facebook", label: "Facebook", Icon: Facebook },
   { key: "instagram", label: "Instagram", Icon: Instagram },
   { key: "linkedin", label: "LinkedIn", Icon: Linkedin },
   { key: "youtube", label: "YouTube", Icon: Youtube },
+  { key: "tiktok", label: "TikTok", Icon: TikTokIcon },
 ];
 
 function safeSocialUrl(value) {

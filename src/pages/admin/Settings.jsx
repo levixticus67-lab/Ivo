@@ -9,12 +9,13 @@ import { saveSiteSettings, subscribeSiteSettings } from "../../services/firestor
 import { services } from "../../data/services";
 
 const watchSettings = (callback, onError) => subscribeSiteSettings((settings) => callback([settings]), onError);
-const emptySettings = { address: "", phone: "", email: "", workingHours: "", mapLink: "", tagline: "Engineering Precision. Structural Excellence. Innovative Designs.", serviceImages: {}, socialLinks: { facebook: "", instagram: "", linkedin: "", youtube: "" } };
+const emptySettings = { address: "", phone: "", email: "", workingHours: "", mapLink: "", tagline: "Engineering Precision. Structural Excellence. Innovative Designs.", serviceImages: {}, socialLinks: { facebook: "", instagram: "", linkedin: "", youtube: "", tiktok: "" } };
 const socialFields = [
   { name: "facebook", label: "Facebook", placeholder: "https://facebook.com/your-page" },
   { name: "instagram", label: "Instagram", placeholder: "https://instagram.com/your-profile" },
   { name: "linkedin", label: "LinkedIn", placeholder: "https://linkedin.com/company/your-company" },
   { name: "youtube", label: "YouTube", placeholder: "https://youtube.com/@your-channel" },
+  { name: "tiktok", label: "TikTok", placeholder: "https://www.tiktok.com/@your-profile" },
 ];
 
 export default function Settings() {
