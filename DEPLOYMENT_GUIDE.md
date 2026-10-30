@@ -56,7 +56,7 @@ Keep hook URLs in GitHub Secrets, not source files or logs.
 ## 5. Sample imagery and go-live checklist
 
 - Four generated concept images are included in public/demo-images and shown as illustrative examples across the public site.
-- The portfolio shows three labelled sample concepts only when Firestore has no published project records. They are not actual company work. Publishing a real project replaces the sample set.
+- The Home and Projects pages show only published Firestore project records. When none are available, they display an empty state instead of sample projects. Any published record marked as a demo is labelled as an illustrative concept, not actual company work.
 - Replace homepage, About, contact, and service imagery with company-approved images in Admin → Site settings. Add approved photos to project covers/galleries and client portraits only when the company has permission to publish them.
 - Verify that an admin upload appears on the public site after saving and that a signed-in non-admin account receives a 403 from the API upload route.
 - Confirm the company’s privacy notice, verified contact details, real portfolio permissions, and image rights before go-live.

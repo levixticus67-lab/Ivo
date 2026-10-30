@@ -9,7 +9,7 @@ A React, Vite, and Tailwind public website with a Firebase-backed admin dashboar
 - Firebase Auth custom-claim authorization and restrictive Firestore rules. Public visitors can create validated quote requests; only administrators can read leads or edit site data.
 - Admin image-upload buttons for homepage, About, contact, service cards, project covers and galleries, and testimonial portraits.
 - A Node API service that verifies Firebase admin ID tokens before uploading images to Cloudinary. The Cloudinary API secret stays server-side.
-- Clearly labelled illustrative sample images and portfolio concepts for visual testing. They are not real company projects or client claims.
+- Illustrative sample imagery is used for visual testing. Only published Firestore project records appear in the portfolio; any record marked as a demo is labelled as an illustrative concept, not real company work or a client claim.
 - Render Blueprint for the static frontend and API service, GitHub Actions CI, and manual Render deploy workflows.
 
 ## Local setup
