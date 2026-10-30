@@ -48,7 +48,7 @@ export default function ImageUploadField({ label, scope, value, onChange, helper
       {uploading ? <LoaderCircle className="animate-spin" size={16} /> : <ImagePlus size={16} />}
       {uploading ? "Uploading image…" : imageUrl ? "Replace image" : "Upload image"}
     </button>
-    <p className="mt-2 text-xs leading-5 text-slate-500">{helper || "JPG, PNG, WebP, or AVIF · up to 10 MB. Save this form to publish the upload."}</p>
+    {helper && <p className="mt-2 text-xs leading-5 text-slate-500">{helper}</p>}
     {error && <p role="alert" className="mt-2 text-xs text-rose-200">{error}</p>}
   </div>;
 }

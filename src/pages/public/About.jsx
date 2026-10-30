@@ -23,7 +23,6 @@ const standards = [
 
 export default function About() {
   const { settings } = useSiteSettings();
-  const hasCustomAboutImage = Boolean(resolveImageUrl(settings.aboutImage));
   const aboutImage = resolveImageUrl(settings.aboutImage) || demoImages.about;
   return <>
     <section className="relative isolate flex min-h-[420px] items-end overflow-hidden px-4 py-16 sm:px-6 sm:py-20">
@@ -35,7 +34,7 @@ export default function About() {
         <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-6xl">Isometric Designs and Construction Company Limited</h1>
         <p className="mt-5 max-w-3xl text-base leading-7 text-slate-200 sm:text-lg">We work across commercial construction, residential design and build, civil infrastructure, structural engineering and interior renovation. We bring these services together in one coordinated offer.</p>
       </div>
-      <p className="absolute bottom-4 right-4 text-xs text-white/70">{hasCustomAboutImage ? "Company image" : "Illustrative concept image"}</p>
+
     </section>
     <section className="px-4 py-12 sm:px-6 sm:py-16"><div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2"><GlassCard className="p-7 sm:p-9"><p className="eyebrow">Our mission</p><h2 className="mt-3 text-2xl font-semibold text-white">Turn project goals into clear plans and careful construction.</h2><p className="mt-4 leading-7 text-slate-300">We turn client goals into practical design and engineering decisions, then carry those decisions through construction with care.</p></GlassCard><GlassCard className="p-7 sm:p-9"><p className="eyebrow">Our vision</p><h2 className="mt-3 text-2xl font-semibold text-white">A built environment shaped by thoughtful coordination.</h2><p className="mt-4 leading-7 text-slate-300">We want to be a trusted partner for projects where structural integrity, functional design and responsible execution all matter.</p></GlassCard></div></section>
     <section className="px-4 py-12 sm:px-6 sm:py-16"><div className="mx-auto max-w-7xl"><SectionHeading eyebrow="What guides us" title="Our values" /><div className="grid gap-6 border-t border-white/10 pt-6 sm:grid-cols-2 lg:grid-cols-4">{values.map((value) => <div key={value.title}><h3 className="font-semibold text-white">{value.title}</h3><p className="mt-3 text-sm leading-6 text-slate-400">{value.text}</p></div>)}</div></div></section>
