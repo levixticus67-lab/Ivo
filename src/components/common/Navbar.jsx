@@ -16,7 +16,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/90 px-4 backdrop-blur-xl sm:px-6">
       <nav className="mx-auto flex min-h-[4.75rem] max-w-7xl items-center justify-between gap-6 py-3" aria-label="Main navigation">
-        <Link to="/" onClick={close} className="min-w-0 leading-tight">
+        <Link to="/" onClick={close} className="flex min-w-0 items-center gap-3 leading-tight">
+          <img src="/favicon.svg" alt="" aria-hidden="true" className="h-10 w-10 shrink-0" />
           <span className="block truncate text-[10px] font-bold uppercase tracking-[.08em] text-white sm:text-sm">Isometric Designs and Construction</span>
           <span className="mt-1 block text-[9px] uppercase tracking-[.18em] text-slate-400 sm:text-[10px]">Company Limited</span>
         </Link>
