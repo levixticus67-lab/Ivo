@@ -6,7 +6,7 @@ import express from "express";
 import { cert, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import multer from "multer";
-import { getUploadFolder, isAllowedImageType, MAX_IMAGE_BYTES } from "./uploadRules.js";
+import { getUploadFolder, isAllowedImageType, isAllowedVideoType, MAX_IMAGE_BYTES, MAX_VIDEO_BYTES } from "./uploadRules.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 10000;
@@ -82,6 +82,15 @@ const imageUpload = multer({
   },
 }).single("image");
 
+const videoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_VIDEO_BYTES, files: 1, fields: 0, parts: 1 },
+  fileFilter(_request, file, callback) {
+    if (!isAllowedVideoType(file.mimetype)) return callback(new Error("Upload an MP4 or WebM video."));
+    return callback(null, true);
+  },
+}).single("video");
+
 function uploadImage(file, folder) {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -94,6 +103,28 @@ function uploadImage(file, folder) {
       folder,
       resource_type: "image",
       allowed_formats: ["jpg", "jpeg", "png", "webp", "avif"],
+      use_filename: true,
+      unique_filename: true,
+    }, (error, result) => {
+      if (error) return reject(error);
+      return resolve(result);
+    });
+    Readable.from(file.buffer).pipe(uploadStream);
+  });
+}
+
+function uploadVideo(file, folder) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
+  });
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream({
+      folder,
+      resource_type: "video",
+      allowed_formats: ["mp4", "webm"],
       use_filename: true,
       unique_filename: true,
     }, (error, result) => {
@@ -132,13 +163,36 @@ app.post("/api/uploads", requireAdmin, (request, response, next) => {
   }
 });
 
-app.use((error, _request, response, _next) => {
+app.post("/api/uploads/videos", requireAdmin, (request, response, next) => {
+  videoUpload(request, response, (error) => error ? next(error) : next());
+}, async (request, response, next) => {
+  try {
+    if (!cloudinaryReady) return response.status(503).json({ error: "Cloudinary is not configured on the API service yet." });
+    if (!request.file) return response.status(400).json({ error: "Choose an MP4 or WebM video to upload." });
+    if (!isAllowedVideoType(request.file.mimetype)) return response.status(415).json({ error: "Upload an MP4 or WebM video." });
+    const result = await uploadVideo(request.file, getUploadFolder("hero-video"));
+    return response.status(201).json({ asset: {
+      url: result.secure_url,
+      publicId: result.public_id,
+      width: result.width,
+      height: result.height,
+      format: result.format,
+      bytes: result.bytes,
+      duration: result.duration,
+    } });
+  } catch (error) {
+    console.error("Cloudinary hero video upload failed:", error && error.message ? error.message : "unknown error");
+    return next(new Error("Cloudinary could not save this video. Check the API service configuration and try again."));
+  }
+});
+
+app.use((error, request, response, _next) => {
   if (error instanceof multer.MulterError) {
-    const message = error.code === "LIMIT_FILE_SIZE" ? "Image must be 10 MB or smaller." : "Upload one image at a time.";
+    const message = error.code === "LIMIT_FILE_SIZE" ? (request.path === "/api/uploads/videos" ? "Videos must be 25 MB or smaller." : "Image must be 10 MB or smaller.") : "Upload one file at a time.";
     return response.status(400).json({ error: message });
   }
   if (error && error.message === "Origin is not allowed.") return response.status(403).json({ error: "This website origin is not allowed to upload here." });
-  if (error && error.message === "Upload a JPG, PNG, WebP, or AVIF image.") return response.status(415).json({ error: error.message });
+  if (error && (error.message === "Upload a JPG, PNG, WebP, or AVIF image." || error.message === "Upload an MP4 or WebM video.")) return response.status(415).json({ error: error.message });
   const status = Number(error && error.status) || 500;
   return response.status(status).json({ error: error && error.message ? error.message : "The upload request failed." });
 });

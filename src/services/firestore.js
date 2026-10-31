@@ -22,7 +22,7 @@ function watchCollection(name, callback, onError, publicOnly = false) {
 }
 
 export function subscribePublicProjects(callback, onError) {
-  return watchCollection("projects", callback, onError, true);
+  return watchCollection("projects", (items) => callback(items.filter((item) => !item.isDemo)), onError, true);
 }
 export function subscribeAdminProjects(callback, onError) {
   return watchCollection("projects", callback, onError);

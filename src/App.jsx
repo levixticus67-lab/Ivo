@@ -1,4 +1,5 @@
-import { Route, Routes, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Route, Routes, Outlet, useLocation } from "react-router-dom";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -16,6 +17,12 @@ import Leads from "./pages/admin/Leads";
 import Settings from "./pages/admin/Settings";
 import ManageTestimonials from "./pages/admin/ManageTestimonials";
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [pathname]);
+  return null;
+}
+
 function PublicLayout() {
   return <div className="public-site bg-mesh min-h-screen text-white"><Navbar /><main className="min-h-[60vh]"><Outlet /></main><Footer /></div>;
 }
@@ -26,7 +33,9 @@ function NotFound() {
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       <Route element={<PublicLayout />}>
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
@@ -47,6 +56,7 @@ export default function App() {
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />
-    </Routes>
+      </Routes>
+    </>
   );
 }

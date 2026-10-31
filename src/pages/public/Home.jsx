@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, Expand, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import GlassCard from "../../components/common/GlassCard";
 import SectionHeading from "../../components/common/SectionHeading";
+import ImageLightbox from "../../components/common/ImageLightbox";
 import LoadingState from "../../components/common/LoadingState";
 import { useCollection } from "../../hooks/useCollection";
 import { useSiteSettings } from "../../hooks/useSiteSettings";
-import { demoImages } from "../../data/demoImagery";
 import { services } from "../../data/services";
 import { resolveImageUrl } from "../../utils/images";
 import { subscribePublicProjects, subscribeTestimonials } from "../../services/firestore";
@@ -21,6 +21,7 @@ export default function Home() {
   const { items: testimonials } = useCollection(subscribeTestimonials);
   const { settings } = useSiteSettings();
   const [quoteIndex, setQuoteIndex] = useState(0);
+  const [viewingImage, setViewingImage] = useState(null);
   useEffect(() => {
     if (testimonials.length < 2) return undefined;
     const timer = window.setInterval(() => setQuoteIndex((index) => (index + 1) % testimonials.length), 6500);
@@ -28,13 +29,14 @@ export default function Home() {
   }, [testimonials.length]);
   const featured = projects.slice(0, 3);
   const currentQuote = testimonials.length ? testimonials[quoteIndex % testimonials.length] : null;
-  const heroImage = resolveImageUrl(settings.heroImage) || demoImages.hero;
+  const heroImage = resolveImageUrl(settings.heroImage);
+  const heroVideo = resolveImageUrl(settings.heroVideo);
   const previewServices = services.filter((service) => service.id !== "management");
   const collaborators = Array.isArray(settings.collaborators) ? settings.collaborators.filter((entry) => entry && entry.isPublished) : [];
 
   return <>
-    <section className="relative isolate flex min-h-[560px] items-center overflow-hidden px-4 py-16 sm:px-6 sm:py-24">
-      <img src={heroImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+    <section className="relative isolate flex min-h-[560px] items-center overflow-hidden bg-slate-950 px-4 py-16 sm:px-6 sm:py-24">
+      {heroVideo ? <video src={heroVideo} poster={heroImage || undefined} className="absolute inset-0 h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" aria-hidden="true" tabIndex="-1" /> : heroImage ? <img src={heroImage} alt="" className="absolute inset-0 h-full w-full object-cover" /> : null}
       <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/25" />
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-transparent to-slate-950/10" />
       <motion.div className="relative mx-auto grid w-full max-w-7xl items-end gap-10 lg:grid-cols-[1.1fr_.9fr]" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .55 }}>
@@ -55,7 +57,7 @@ export default function Home() {
 
     </section>
 
-    <section className="px-4 py-14 sm:px-6 sm:py-20"><div className="mx-auto max-w-7xl"><SectionHeading eyebrow="Our services" title="Services for each stage of your project" description="We bring design, engineering and construction together from the start." /><div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">{previewServices.map((service, index) => { const image = resolveImageUrl(settings.serviceImages && settings.serviceImages[service.id]) || demoImages.services[service.imageKey]; return <motion.div key={service.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * .05 }}><GlassCard hover className="h-full overflow-hidden p-0"><div className="relative h-44 overflow-hidden"><img src={image} alt="" className="h-full w-full object-cover" loading="lazy" /><div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 to-transparent" /><span className="absolute bottom-3 left-4 text-xs font-medium uppercase tracking-wider text-white">{service.title}</span></div><div className="p-5"><p className="text-sm leading-6 text-slate-300">{service.intro}</p><Link to="/services" className="mt-5 inline-flex text-sm font-semibold text-amber-200 hover:text-white">Explore service</Link></div></GlassCard></motion.div>; })}</div></div></section>
+    <section className="px-4 py-14 sm:px-6 sm:py-20"><div className="mx-auto max-w-7xl"><SectionHeading eyebrow="Our services" title="Services for each stage of your project" description="We bring design, engineering and construction together from the start." /><div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">{previewServices.map((service, index) => { const image = resolveImageUrl(settings.serviceImages && settings.serviceImages[service.id]); return <motion.div key={service.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * .05 }}><GlassCard hover className="h-full overflow-hidden p-0"><div className="relative h-44 overflow-hidden bg-slate-900">{image ? <button type="button" className="absolute inset-0 border-0 bg-transparent p-0 text-left cursor-zoom-in" aria-label={"View full-size " + service.title + " image"} onClick={() => setViewingImage({ src: image, alt: service.title + " service image" })}><img src={image} alt="" className="h-full w-full object-cover" loading="lazy" /><span className="absolute bottom-3 right-3 rounded-full bg-slate-950/75 p-2 text-white"><Expand size={15} /></span></button> : <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950" />}<div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 to-transparent" /><span className="pointer-events-none absolute bottom-3 left-4 text-xs font-medium uppercase tracking-wider text-white">{service.title}</span></div><div className="p-5"><p className="text-sm leading-6 text-slate-300">{service.intro}</p><Link to="/services" className="mt-5 inline-flex text-sm font-semibold text-amber-200 hover:text-white">Explore service</Link></div></GlassCard></motion.div>; })}</div></div></section>
 
     <section className="px-4 py-14 sm:px-6 sm:py-20"><div className="mx-auto max-w-7xl"><div className="flex flex-wrap items-end justify-between gap-5"><SectionHeading eyebrow="Projects" title={projects.length ? "Selected work" : "Projects"} description={projects.length ? "See the projects our team has chosen to share." : undefined} /><Link to="/projects" className="button-secondary mb-10">All projects</Link></div>{projectsLoading ? <LoadingState label="Loading projects" /> : projectsError ? <div role="status" className="rounded-xl border border-white/10 bg-slate-950/35 p-6 text-sm text-slate-300">Published projects are temporarily unavailable. Please try again later.</div> : featured.length > 0 ? <><div className="mb-5 flex flex-wrap items-center gap-2 text-xs text-slate-400"><span className="status-pill">Published projects</span></div><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{featured.map((project) => { const image = resolveImageUrl(project.imageUrl); return <Link key={project.id} to="/projects" className="group overflow-hidden rounded-xl border border-white/10 bg-slate-950/35"><div className="relative h-56 overflow-hidden bg-slate-900">{image ? <img src={image} alt={project.title + " project image"} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy" /> : <div className="grid h-full place-items-center text-xs text-slate-500" role="img" aria-label="Project image not provided">Image not provided</div>}<span className="absolute left-4 top-4 rounded bg-slate-950/80 px-3 py-1.5 text-xs font-medium text-white">{project.isDemo ? "Illustrative concept" : project.category || "Project"}</span></div><div className="p-5">{!project.isDemo && <p className="text-xs font-semibold uppercase tracking-wider text-amber-200">{project.category}</p>}<h3 className="mt-2 font-semibold text-white">{project.title}</h3>{!project.isDemo && project.location && <p className="mt-2 text-sm text-slate-400">{project.location}</p>}</div></Link>; })}</div></> : <GlassCard className="p-7 text-center sm:p-9"><h3 className="text-lg font-semibold text-white">No project case studies have been published yet</h3><p className="mt-2 text-sm leading-6 text-slate-400">Published project details will appear here when they are added.</p><Link to="/contact" className="mt-5 inline-flex text-sm font-semibold text-amber-200 hover:text-white">Talk to our team</Link></GlassCard>}</div></section>
 
@@ -66,5 +68,6 @@ export default function Home() {
     {collaborators.length > 0 && <section className="px-4 py-10 sm:px-6 sm:py-14"><div className="mx-auto max-w-7xl"><SectionHeading eyebrow="Partners & collaborators" title="Better work comes from good coordination" align="center" /><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{collaborators.map((person) => <div key={person.id || person.name} className="flex items-center gap-4 border-t border-white/15 py-4"><div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-amber-300/30 bg-slate-800 text-sm font-semibold text-amber-200">{resolveImageUrl(person.portrait) ? <img src={resolveImageUrl(person.portrait)} alt={person.name} className="h-full w-full object-cover" loading="lazy" /> : initials(person.name)}</div><div className="min-w-0"><p className="truncate font-semibold text-white">{person.name}</p>{person.role && <p className="mt-1 truncate text-sm text-slate-400">{person.role}</p>}</div></div>)}</div></div></section>}
 
     <section className="px-4 pb-16 pt-6 sm:px-6 sm:pb-24 sm:pt-10"><div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 border-t border-white/15 py-8 sm:flex-row sm:items-center sm:py-10"><div><p className="eyebrow">Start a conversation</p><h2 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">Have a project in mind?</h2><p className="mt-2 text-slate-300">Share the brief. We’ll help you shape the next practical step.</p></div><div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row"><Link to="/contact" className="button-primary w-full shrink-0 sm:w-auto">Talk to our team</Link>{settings.mapLink && <a className="button-secondary w-full sm:w-auto" href={settings.mapLink} target="_blank" rel="noreferrer">Open location <MapPin size={15} /></a>}</div></div></section>
+    <ImageLightbox image={viewingImage} onClose={() => setViewingImage(null)} />
   </>;
 }

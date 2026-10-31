@@ -1,7 +1,6 @@
 import GlassCard from "../../components/common/GlassCard";
 import SectionHeading from "../../components/common/SectionHeading";
 import { useSiteSettings } from "../../hooks/useSiteSettings";
-import { demoImages } from "../../data/demoImagery";
 import { resolveImageUrl } from "../../utils/images";
 
 const values = [
@@ -23,10 +22,10 @@ const standards = [
 
 export default function About() {
   const { settings } = useSiteSettings();
-  const aboutImage = resolveImageUrl(settings.aboutImage) || demoImages.about;
+  const aboutImage = resolveImageUrl(settings.aboutImage);
   return <>
-    <section className="relative isolate flex min-h-[420px] items-end overflow-hidden px-4 py-16 sm:px-6 sm:py-20">
-      <img src={aboutImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+    <section className="relative isolate flex min-h-[420px] items-end overflow-hidden bg-slate-950 px-4 py-16 sm:px-6 sm:py-20">
+      {aboutImage && <img src={aboutImage} alt="" className="absolute inset-0 h-full w-full object-cover" />}
       <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-slate-950/25" />
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/10" />
       <div className="relative mx-auto w-full max-w-7xl">

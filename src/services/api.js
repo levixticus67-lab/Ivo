@@ -45,3 +45,20 @@ export async function uploadImage(file, section) {
   if (!payload.asset || !payload.asset.url) throw new Error("The image server returned an incomplete upload result.");
   return payload.asset;
 }
+
+export async function uploadVideo(file) {
+  if (!uploadApiBase) throw new Error("Video uploads are not connected. Add VITE_UPLOAD_API_URL after deploying the Render API service.");
+  if (!auth || !auth.currentUser) throw new Error("Sign in with an approved admin account before uploading videos.");
+  const token = await auth.currentUser.getIdToken();
+  const body = new FormData();
+  body.append("video", file);
+  const response = await fetch(uploadApiBase + "/uploads/videos", {
+    method: "POST",
+    headers: { Authorization: "Bearer " + token },
+    body,
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || "Video upload failed with status " + response.status);
+  if (!payload.asset || !payload.asset.url) throw new Error("The video server returned an incomplete upload result.");
+  return payload.asset;
+}

@@ -3,13 +3,14 @@ import { Save } from "lucide-react";
 import GlassCard from "../../components/common/GlassCard";
 import LoadingState from "../../components/common/LoadingState";
 import ImageUploadField from "../../components/admin/ImageUploadField";
+import VideoUploadField from "../../components/admin/VideoUploadField";
 import { isFirebaseConfigured } from "../../firebase/config";
 import { useCollection } from "../../hooks/useCollection";
 import { saveSiteSettings, subscribeSiteSettings } from "../../services/firestore";
 import { services } from "../../data/services";
 
 const watchSettings = (callback, onError) => subscribeSiteSettings((settings) => callback([settings]), onError);
-const emptySettings = { address: "", phone: "", email: "", workingHours: "", mapLink: "", tagline: "Engineering Precision. Structural Excellence. Innovative Designs.", serviceImages: {}, socialLinks: { facebook: "", instagram: "", linkedin: "", youtube: "", tiktok: "" } };
+const emptySettings = { address: "", phone: "", email: "", workingHours: "", mapLink: "", heroImage: "", heroVideo: null, tagline: "Engineering Precision. Structural Excellence. Innovative Designs.", serviceImages: {}, socialLinks: { facebook: "", instagram: "", linkedin: "", youtube: "", tiktok: "" } };
 const socialFields = [
   { name: "facebook", label: "Facebook", placeholder: "https://facebook.com/your-page" },
   { name: "instagram", label: "Instagram", placeholder: "https://instagram.com/your-profile" },
@@ -30,7 +31,7 @@ export default function Settings() {
   const setServiceImage = (serviceId, asset) => setForm((current) => ({ ...current, serviceImages: { ...(current.serviceImages || {}), [serviceId]: asset } }));
   const submit = async (event) => {
     event.preventDefault(); setSaving(true); setNotice("");
-    try { await saveSiteSettings(form); setNotice("Site settings, social links, and imagery saved. Published images are now live on the public site."); }
+    try { await saveSiteSettings(form); setNotice("Site settings, social links, and media saved. Uploaded media is now live on the public site."); }
     catch (reason) { setNotice(reason.message || "Could not save settings."); }
     finally { setSaving(false); }
   };
@@ -40,8 +41,9 @@ export default function Settings() {
     <GlassCard className="mt-7 p-6 sm:p-8"><form onSubmit={submit} className="grid gap-5 sm:grid-cols-2"><div className="sm:col-span-2"><h2 className="text-lg font-semibold text-white">Contact details</h2><p className="mt-1 text-sm text-slate-400">Only enter contact information confirmed by the company.</p></div>{fields.map((field) => <div key={field.name}><label className="field-label" htmlFor={field.name}>{field.label}</label><input className="field-control" id={field.name} name={field.name} value={form[field.name] || ""} onChange={change} placeholder={field.placeholder} type={field.name === "email" ? "email" : field.name === "mapLink" ? "url" : "text"} maxLength={240} /></div>)}
       <div className="sm:col-span-2 mt-3 border-t border-white/10 pt-6"><h2 className="text-lg font-semibold text-white">Social media</h2><p className="mt-1 text-sm leading-6 text-slate-400">Add the company profile URLs to show their icons in the public site footer. Leave a field blank to hide that icon.</p></div>
       {socialFields.map((field) => <div key={field.name}><label className="field-label" htmlFor={`social-${field.name}`}>{field.label} URL</label><input className="field-control" id={`social-${field.name}`} type="url" maxLength={500} value={(form.socialLinks && form.socialLinks[field.name]) || ""} onChange={(event) => changeSocialLink(field.name, event.target.value)} placeholder={field.placeholder} /></div>)}
-      <div className="sm:col-span-2 mt-3 border-t border-white/10 pt-6"><h2 className="text-lg font-semibold text-white">Public page imagery</h2></div>
-      <ImageUploadField label="Homepage hero" scope="hero" value={form.heroImage} onChange={(asset) => setImage("heroImage", asset)} />
+      <div className="sm:col-span-2 mt-3 border-t border-white/10 pt-6"><h2 className="text-lg font-semibold text-white">Public page media</h2></div>
+      <ImageUploadField label="Homepage hero image" scope="hero" value={form.heroImage} onChange={(asset) => setImage("heroImage", asset)} />
+      <VideoUploadField label="Homepage hero video" value={form.heroVideo} onChange={(asset) => setImage("heroVideo", asset)} helper="Optional MP4 or WebM video. When saved, it plays over the uploaded hero image." />
       <ImageUploadField label="About page feature" scope="about" value={form.aboutImage} onChange={(asset) => setImage("aboutImage", asset)} />
       <div className="sm:col-span-2"><ImageUploadField label="Contact page feature" scope="contact" value={form.contactImage} onChange={(asset) => setImage("contactImage", asset)} /></div>
       <div className="sm:col-span-2 mt-3 border-t border-white/10 pt-6"><h2 className="text-lg font-semibold text-white">Service images</h2></div>

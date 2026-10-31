@@ -7,9 +7,9 @@ A React, Vite, and Tailwind public website with a Firebase-backed admin dashboar
 - Public routes: home, about, services, projects, and contact / quote request.
 - Admin routes: Firebase sign-in, analytics overview, project CRUD, quote inbox, testimonial publishing, and site settings, including social profile URLs.
 - Firebase Auth custom-claim authorization and restrictive Firestore rules. Public visitors can create validated quote requests; only administrators can read leads or edit site data.
-- Admin image-upload buttons for homepage, About, contact, service cards, project covers and galleries, and testimonial portraits.
+- Admin image-upload buttons for About, contact, service cards, project covers and galleries, and testimonial portraits; the homepage hero supports an uploaded image or an MP4/WebM video up to 25 MB.
 - A Node API service that verifies Firebase admin ID tokens before uploading images to Cloudinary. The Cloudinary API secret stays server-side.
-- Illustrative sample imagery is used for visual testing. Only published Firestore project records appear in the portfolio; any record marked as a demo is labelled as an illustrative concept, not real company work or a client claim.
+- Public project, service, and page imagery is shown only when uploaded by an administrator; bundled demo photo fallbacks are removed.
 - Render Blueprint for the static frontend and API service, GitHub Actions CI, and manual Render deploy workflows.
 
 ## Local setup
@@ -31,7 +31,7 @@ Use the step-by-step [deployment guide](DEPLOYMENT_GUIDE.md). The Render Bluepri
 - projects: title, category, status, location, imageUrl, imagePublicId, gallery, client, summary, description, isPublished, timestamps.
 - quotes: contact details, project brief, status, createdAt.
 - testimonials: quote, name, role, optional portrait, isPublished.
-- siteSettings/public: verified contact details, social media profile URLs, hero/About/contact imagery, per-service images, tagline, and updatedAt.
+- siteSettings/public: verified contact details, social media profile URLs, hero image or video, About/contact imagery, per-service images, tagline, and updatedAt.
 - Cloudinary folders: fixed website-image areas; image uploads require a verified Firebase admin custom claim.
 
 The repository contains no sample client records, testimonials, employee identities, project claims, or company certifications. The visual demo assets are marked as illustrative concepts.
